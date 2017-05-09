@@ -25,7 +25,7 @@
 #include "./load_snap.h"
 #include "./potential.h"
 
-void fill_potential_container(float *PotInput,int Ngrid,double boxsize,struct potential_container *PotCont){ //Computes all spacial derivatives.
+void fill_potential_container(float *PotInput,int Ngrid,double boxsize,struct potential_container **PotCont,int Snap){ //Computes all spacial derivatives.
 double dum,kscale;
 int a,b,c,i,koor,k1,k2,k3,Ngrid3=Ngrid*Ngrid*Ngrid;
 double *pot;
@@ -44,7 +44,7 @@ if (!(der3_fft=(fftw_complex*) fftw_malloc(Ngrid*Ngrid*(Ngrid/2+1)*sizeof(fftw_c
 #pragma omp parallel for schedule(guided)
 for (i=0;i<Ngrid3;i++) {
 	pot[i]=PotInput[i]; //Need to change to double for usage of fftw3.
-	PotCont[i].val=PotInput[i];
+	PotCont[i][Snap].val=PotInput[i];
 }
 
 PotFFT=fftw_plan_dft_r2c_3d(Ngrid, Ngrid, Ngrid, pot, pot_fft, FFTW_ESTIMATE);
@@ -82,13 +82,13 @@ for (a=0;a<Ngrid;a++){
 
 fftw_execute(PotDer1FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].firD[0]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].firD[0]=pot[i];
 fftw_execute(PotDer2FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].firD[1]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].firD[1]=pot[i];
 fftw_execute(PotDer3FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].firD[2]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].firD[2]=pot[i];
 
 
 kscale=4.0*CONSPI*CONSPI/(boxsize*boxsize*Ngrid3);
@@ -124,13 +124,13 @@ for (a=0;a<Ngrid;a++){
 
 fftw_execute(PotDer1FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].secD[0]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].secD[0]=pot[i];
 fftw_execute(PotDer2FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].secD[1]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].secD[1]=pot[i];
 fftw_execute(PotDer3FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].secD[2]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].secD[2]=pot[i];
 
 #pragma omp parallel for schedule(guided) private(k1,k2,k3,dum,a,b,c,koor) firstprivate(kscale)
 for (a=0;a<Ngrid;a++){
@@ -163,13 +163,13 @@ fftw_free(pot_fft);
 
 fftw_execute(PotDer1FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].croD[0]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].croD[0]=pot[i];
 fftw_execute(PotDer2FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].croD[1]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].croD[1]=pot[i];
 fftw_execute(PotDer3FFT); /* Fourier transform back */
 #pragma omp parallel for schedule(guided)
-for (i=0;i<Ngrid3;i++) PotCont[i].croD[2]=pot[i];
+for (i=0;i<Ngrid3;i++) PotCont[i][Snap].croD[2]=pot[i];
 
 fftw_free(der1_fft);
 fftw_free(der2_fft);
@@ -360,12 +360,12 @@ fflush(stdout);
 return result;
 }
 
-double get_potential_value(double posx,double posy,double posz,double gridsize,int Ngrid,struct potential_container *Pot){
+double get_potential_value(double posx,double posy,double posz,double gridsize,int Ngrid,struct potential_container **Pot,int Snap){
 int x,y,z;
 x=abs(posx/gridsize);
 y=abs(posy/gridsize);
 z=abs(posz/gridsize);
-return Pot[shift_koor(x,y,z,Ngrid)].val;
+return Pot[shift_koor(x,y,z,Ngrid)][Snap].val;
 }
 
 void get_potential(char *fname,float **pot,int Ngrid,struct header_snapshot Head,char *path){
@@ -426,14 +426,14 @@ for (i=1;i<Nsnap-1;i++){
 	dist=(rangemax[i+1]-rangemax[i])/(rangemax[i]-rangemax[i-1]);
 	weight=(rangemax[i]-rangemax[i-1])+(rangemax[i+1]-rangemax[i])*(rangemax[i+1]-rangemax[i])/(rangemax[i]-rangemax[i-1]);
 	dist=dist*dist;
-	for (koor=0;koor<Ngrid3;++koor) PotCont[i][koor].timeD=(PotCont[i+1][koor].val-PotCont[i-1][koor].val*dist)/weight*Head[i].time;
+	for (koor=0;koor<Ngrid3;++koor) PotCont[koor][i].timeD=(PotCont[koor][i+1].val-PotCont[koor][i-1].val*dist)/weight*Head[i].time;
 }
 weight=1.0/(rangemax[1]-rangemax[0]);
 dist=1.0/(rangemax[Nsnap-1]-rangemax[Nsnap-2]);
 #pragma omp parallel for schedule(guided) private(koor)
 for (koor=0;koor<Ngrid3;koor++){
-	PotCont[0][koor].timeD=(PotCont[1][koor].val-PotCont[0][koor].val)*weight*Head[0].time;
-	PotCont[Nsnap-1][koor].timeD=(PotCont[Nsnap-1][koor].val-PotCont[Nsnap-2][koor].val)*dist*Head[Nsnap-1].time;
+	PotCont[koor][0].timeD=(PotCont[koor][1].val-PotCont[koor][0].val)*weight*Head[0].time;
+	PotCont[koor][Nsnap-1].timeD=(PotCont[koor][Nsnap-1].val-PotCont[koor][Nsnap-2].val)*dist*Head[Nsnap-1].time;
 }
 printf("done.\n");
 fflush(stdout);

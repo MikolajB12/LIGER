@@ -4,11 +4,11 @@
 #ifndef _POTENTIAL_H
 #define _POTENTIAL_H
 #include "vardef.h"
-void fill_potential_container(float *PotInput,int Ngrid,double boxsize,struct potential_container *PotCont); //Computes all spacial derivatives.
+void fill_potential_container(float *PotInput,int Ngrid,double boxsize,struct potential_container **PotCont,int Snap); //Computes all spacial derivatives.
 int overdens(double *Alldens,int Ngrid);
 double *density_field(struct particle_data *P,struct header_snapshot header1,unsigned long Ngrid,int flag);
 double weight(struct particle_data part,double gridx,double gridy,double gridz,double gridsize,int flag);
-double get_potential_value(double posx,double posy,double posz,double gridsize,int Ngrid,struct potential_container *Pot);
+double get_potential_value(double posx,double posy,double posz,double gridsize,int Ngrid,struct potential_container **Pot,int Snap);
 float *grav_potential(double **dens,int Ngrid,struct header_snapshot header1);
 void compute_potential_timeder(int Ngrid3,int Nsnap,double *rangemax,struct header_snapshot *Head,struct potential_container **PotCont);
 int shift_koor(int a,int b,int c,int Ngrid);

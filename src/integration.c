@@ -103,31 +103,31 @@ for (i=1,n=0;(rangemin[i] < MaxLineOfSight)&&(i < run.NSnap);i++) {
 		if (n==0) dr=ray[0].PathIntersec[n]; else dr=ray[0].PathIntersec[n]-ray[0].PathIntersec[n-1];
 		if (n==0) Rcent=ray[0].PathIntersec[n]*0.5; else Rcent=(ray[0].PathIntersec[n]+ray[0].PathIntersec[n-1])*0.5;
 
-		IntegratedPot[0]+=simulation_time_interpol(Pot[j][l].val,Pot[i-1][l].val,Pot[i][l].val,Pot[k][l].val,rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntegratedPot[0]+=simulation_time_interpol(Pot[l][j].val,Pot[l][i-1].val,Pot[l][i].val,Pot[l][k].val,rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
 
-		IntStep[0]=simulation_time_interpol(Pot[j][l].timeD,Pot[i-1][l].timeD,Pot[i][l].timeD,Pot[k][l].timeD,rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[0]=simulation_time_interpol(Pot[l][j].timeD,Pot[l][i-1].timeD,Pot[l][i].timeD,Pot[l][k].timeD,rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
 		IntegratedPot[1]+=IntStep[0];
 		IntegratedPot[2]+=IntStep[0]*Rcent;
 
-		IntStep[1]=simulation_time_interpol(Pot[j][l].firD[0],Pot[i-1][l].firD[0],Pot[i][l].firD[0],Pot[k][l].firD[0],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[1]=simulation_time_interpol(Pot[l][j].firD[0],Pot[l][i-1].firD[0],Pot[l][i].firD[0],Pot[l][k].firD[0],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
 		IntegratedPot[3]+=IntStep[1];
 		IntegratedPot[4]+=IntStep[1]*Rcent;
 
-		//dist=simulation_time_interpol(dPhidy[j][l],dPhidy[i-1][l],dPhidy[i][l],dPhidy[k][l],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
-		IntStep[2]=simulation_time_interpol(Pot[j][l].firD[1],Pot[i-1][l].firD[1],Pot[i][l].firD[1],Pot[k][l].firD[1],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		//dist=simulation_time_interpol(dPhidy[l][j],dPhidy[l][i-1],dPhidy[l][i],dPhidy[l][k],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[2]=simulation_time_interpol(Pot[l][j].firD[1],Pot[l][i-1].firD[1],Pot[l][i].firD[1],Pot[l][k].firD[1],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
 		IntegratedPot[5]+=IntStep[2];
 		IntegratedPot[6]+=IntStep[2]*Rcent;
 
-		IntStep[3]=simulation_time_interpol(Pot[j][l].firD[2],Pot[i-1][l].firD[2],Pot[i][l].firD[2],Pot[k][l].firD[2],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[3]=simulation_time_interpol(Pot[l][j].firD[2],Pot[l][i-1].firD[2],Pot[l][i].firD[2],Pot[l][k].firD[2],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
 		IntegratedPot[7]+=IntStep[3];
 		IntegratedPot[8]+=IntStep[3]*Rcent;
 
-		IntStep[4]=simulation_time_interpol(Pot[j][l].secD[0],Pot[i-1][l].secD[0],Pot[i][l].secD[0],Pot[k][l].secD[0],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
-		IntStep[5]=simulation_time_interpol(Pot[j][l].secD[1],Pot[i-1][l].secD[1],Pot[i][l].secD[1],Pot[k][l].secD[1],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
-		IntStep[6]=simulation_time_interpol(Pot[j][l].secD[2],Pot[i-1][l].secD[2],Pot[i][l].secD[2],Pot[k][l].secD[2],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
-		IntStep[7]=simulation_time_interpol(Pot[j][l].croD[0],Pot[i-1][l].croD[0],Pot[i][l].croD[0],Pot[k][l].croD[0],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
-		IntStep[8]=simulation_time_interpol(Pot[j][l].croD[1],Pot[i-1][l].croD[1],Pot[i][l].croD[1],Pot[k][l].croD[1],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
-		IntStep[9]=simulation_time_interpol(Pot[j][l].croD[2],Pot[i-1][l].croD[2],Pot[i][l].croD[2],Pot[k][l].croD[2],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[4]=simulation_time_interpol(Pot[l][j].secD[0],Pot[l][i-1].secD[0],Pot[l][i].secD[0],Pot[l][k].secD[0],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[5]=simulation_time_interpol(Pot[l][j].secD[1],Pot[l][i-1].secD[1],Pot[l][i].secD[1],Pot[l][k].secD[1],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[6]=simulation_time_interpol(Pot[l][j].secD[2],Pot[l][i-1].secD[2],Pot[l][i].secD[2],Pot[l][k].secD[2],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[7]=simulation_time_interpol(Pot[l][j].croD[0],Pot[l][i-1].croD[0],Pot[l][i].croD[0],Pot[l][k].croD[0],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[8]=simulation_time_interpol(Pot[l][j].croD[1],Pot[l][i-1].croD[1],Pot[l][i].croD[1],Pot[l][k].croD[1],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
+		IntStep[9]=simulation_time_interpol(Pot[l][j].croD[2],Pot[l][i-1].croD[2],Pot[l][i].croD[2],Pot[l][k].croD[2],rangemax[j],rangemax[i-1],rangemax[i],rangemax[k],Rcent)*dr;
 		sum=IntStep[4]+IntStep[5]+IntStep[6];
 		sum+=-2./MaxLineOfSight*(ray[0].normvec[0]*IntStep[1]+ray[0].normvec[1]*IntStep[2]+ray[0].normvec[2]*IntStep[3]);
 		sum-=ray[0].normvec[0]*ray[0].normvec[0]*IntStep[4]+ray[0].normvec[1]*ray[0].normvec[1]*IntStep[5]+ray[0].normvec[2]*ray[0].normvec[2]*IntStep[6]+2.*ray[0].normvec[0]*ray[0].normvec[1]*IntStep[7]+2.*ray[0].normvec[0]*ray[0].normvec[2]*IntStep[8]+2.*ray[0].normvec[1]*ray[0].normvec[2]*IntStep[9];

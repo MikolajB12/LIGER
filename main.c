@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 				ray[b].TimeDistance-=ray[b].vrHub;
 				update_ray(&ray[b]);
 
-				ray[b].pot=get_potential_value(ray[b].end[0],ray[b].end[1],ray[b].end[2],gridsize,Ngrid,Pot[b]);
+				ray[b].pot=get_potential_value(ray[b].end[0],ray[b].end[1],ray[b].end[2],gridsize,Ngrid,Pot,b);
 
 				find_cells_along_ray(&ray[b],gridsize,Ngrid);
 				if (ray[b].CellsAlongPath == 0) continue;
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 				ray[b].TimeDistance-=ray[b].vrHub;
 				update_ray(&ray[b]);
 
-				ray[b].pot=get_potential_value(ray[b].end[0],ray[b].end[1],ray[b].end[2],gridsize,Ngrid,Pot[b]);
+				ray[b].pot=get_potential_value(ray[b].end[0],ray[b].end[1],ray[b].end[2],gridsize,Ngrid,Pot,b);
 
 				find_cells_along_ray(&ray[b],gridsize,Ngrid);
 				if (ray[b].CellsAlongPath == 0) continue;
