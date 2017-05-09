@@ -1,0 +1,20 @@
+%Size and location of the resulting light cone
+DirOutput		~/LigerTest/Run20.00/ObsParticleCone/Cones
+FileNameOutput		FullSkyCone8
+Maxdist			4000.0
+Mindist			0.0
+ObsPos			6000.0	6000.0	6000.0
+
+%Parameters for the computation of the gravitational potential
+IfWritePotential	True
+DirGravPotential	~/LigerTest/Run20.00/SimDensityFields
+NGravGrid		512
+
+%The numerical simulation to use
+DirSimulation		~/LigerTest/Run20.00/Snapshots/lpicola_
+NumSimSnapshots		6
+
+%Code parameters
+NumThreads		8
+NTargetsInMem		10000
+MemBufFactor		1.2
