@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	if (!(rangemax=calloc(run.NSnap,sizeof(double)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 	if (!(PotHold=malloc(Ngrid3*sizeof(float)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 	if (!(Hubarray=malloc(run.NSnap*sizeof(double)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
-	if (!(Pot=calloc(run.NSnap,sizeof(void*)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
+	if (!(Pot=calloc(Ngrid3,sizeof(void*)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 
 	NMaxOutput=abs(run.OutBuf*NumGal*4.*CONSPI/3.*(run.maxdist*run.maxdist*run.maxdist-run.mindist*run.mindist*run.mindist)/(boxsize*boxsize*boxsize));
 	if (NMaxOutput > NumGal) NMaxOutput=NumGal; //Estimate how many particles will be in the output array.
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	fflush(stdout);
 	for (i=0;i<run.NSnap;i++){//Internally we want to have the latest snapshot as the first in the array.
 		printf("Processing snapshot %i\n",run.NSnap-1-i);
-		if (!(Pot[i]=malloc(Ngrid3*sizeof(struct potential_container)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
+		if (!(Pot[i]=malloc(run.NSnap*sizeof(struct potential_container)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 		Head[i]=load_snapshot_header(run.NSnap-1-i);
 		printf("	z=%f\n",Head[i].redshift);
 		fflush(stdout);
