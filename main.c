@@ -95,6 +95,7 @@ int main(int argc, char **argv)
 	if (!(PotHold=malloc(Ngrid3*sizeof(float)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 	if (!(Hubarray=malloc(run.NSnap*sizeof(double)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 	if (!(Pot=calloc(Ngrid3,sizeof(void*)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
+	for (i=0;i<Ngrid3;i++) if (!(Pot[i]=malloc(run.NSnap*sizeof(struct potential_container)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 
 	NMaxOutput=abs(run.OutBuf*NumGal*4.*CONSPI/3.*(run.maxdist*run.maxdist*run.maxdist-run.mindist*run.mindist*run.mindist)/(boxsize*boxsize*boxsize));
 	if (NMaxOutput > NumGal) NMaxOutput=NumGal; //Estimate how many particles will be in the output array.
@@ -110,7 +111,6 @@ int main(int argc, char **argv)
 	fflush(stdout);
 	for (i=0;i<run.NSnap;i++){//Internally we want to have the latest snapshot as the first in the array.
 		printf("Processing snapshot %i\n",run.NSnap-1-i);
-		if (!(Pot[i]=malloc(run.NSnap*sizeof(struct potential_container)))) {printf("Failed to allocate memory for the grid.\n"); exit(0);}
 		Head[i]=load_snapshot_header(run.NSnap-1-i);
 		printf("	z=%f\n",Head[i].redshift);
 		fflush(stdout);
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 		sprintf(gravpath,"%s/GravPot%03d_FullSize_Ng%1d_cic.dat",run.gravpath,run.NSnap-1-i,Ngrid);
 		get_potential(gravpath,&PotHold,Ngrid,Head[i],path); //Read the potential from a file or compute it.
 
-		fill_potential_container(PotHold,Ngrid,boxsize,Pot[i]); //Computes all spacial derivatives.
+		fill_potential_container(PotHold,Ngrid,boxsize,Pot,i); //Computes all spacial derivatives.
 	}
 	compute_potential_timeder(Ngrid3,run.NSnap,rangemax,Head,Pot); //Computes all time derivatives.
 
